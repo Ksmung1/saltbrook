@@ -6,8 +6,8 @@ import { Award, BookOpen, ImageIcon, Users } from "lucide-react";
 import { photosData } from "../data/photosData";
 import SlideIn from "../effects/SlideIn.jsx"
 import building from "../assets/home.jpg"
-import video from "../assets/video.MP4"
-// fixed videoMP4 to videomp4
+import video from "../assets/video.mp4"
+
 import school from "../assets/school.png"
 import ground from "../assets/campus.jpg"
 const schoolName = "Saltbrook School";
@@ -126,6 +126,60 @@ export default function Home() {
 
   const year = new Date().getFullYear() - 2003;
 
+
+const videoRefs = useRef([]); 
+const [isFading, setIsFading] = useState(false);
+const fadeDuration = 0.5; 
+
+useEffect(() => {
+  videoRefs.current.forEach((vid, i) => {
+    if (!vid) return;
+    if (i !== current) {
+      try { vid.pause(); vid.currentTime = 0; } catch (e) {}
+    }
+  });
+
+  const v = videoRefs.current[current];
+  if (!v) return;
+
+  let restartTimeout = null;
+
+  v.play().catch(() =>
+     {});
+  setIsFading(false);
+
+  const onTimeUpdate = () => {
+    if (!v.duration || isNaN(v.duration)) return;
+    const remaining = v.duration - v.currentTime;
+
+    if (remaining <= fadeDuration && !isFading) {
+      setIsFading(true);
+
+      restartTimeout = setTimeout(async () => {
+        try {
+          v.pause();              
+          v.currentTime = 0;
+          await v.play().catch(() => {});
+        } catch (err) {}
+        setTimeout(() => setIsFading(false), 50);
+      }, fadeDuration * 600);
+    }
+  };
+
+  const onPlay = () => setIsFading(false);
+
+  v.addEventListener("timeupdate", onTimeUpdate);
+  v.addEventListener("play", onPlay);
+
+  return () => {
+    v.removeEventListener("timeupdate", onTimeUpdate);
+    v.removeEventListener("play", onPlay);
+    clearTimeout(restartTimeout);
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [current]);
+
+
   return (
     <div>
       {/* SLIDER */}
@@ -189,26 +243,27 @@ const isVideo = typeof slide.media === "string" &&
                     <div className="relative h-[90vh] overflow-hidden">
                       {/* IMAGE */}
 
-                      {isVideo ? (
-                        <video
-                          src={slide.media}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className={`h-full w-full object-cover ${imgScale}`}
-                        />
-                      ) : (
-                        <img
-                          src={slide.media}
-                          alt={slide.label}
-                          className={`h-full w-full object-cover ${imgScale}`}
-                        />
-                      )}
+{isVideo ? (
+  <video
+    ref={(el) => (videoRefs.current[index] = el)}
+    src={slide.media}
+    poster={slide.image}      // prevents white flash while loading
+    autoPlay
+    // loop   <-- removed, we loop manually
+    muted
+    playsInline
+    className={`h-full w-full object-cover ${imgScale} video-fade ${isFading ? "fade-out" : "fade-in"}`}
+  />
+) : (
+  <img
+    src={slide.media}
+    alt={slide.label}
+    className={`h-full w-full object-cover ${imgScale}`}
+  />
+)}
 
 
 
-                      {/* SOFTER GRADIENT OVERLAY */}
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
 
                       {/* TEXT OVER IMAGE */}

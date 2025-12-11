@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+/* global CSS (index.css) */
+.video-fade {
+  transition: opacity 0.8s ease;
+  opacity: 1;
+}
+
+.video-fade.fade-out {
+  opacity: 0.2;
+}
+
+.video-fade.fade-in {
+  opacity: 1;
+}
+
