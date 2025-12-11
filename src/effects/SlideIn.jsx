@@ -38,7 +38,7 @@ const SlideIn = ({ children, direction = 'up', delay = 0 }) => {
       className={`transition-all duration-900 ${
         isVisible
           ? 'opacity-100 translate-x-0 translate-y-0'
-          : `opacity-0 ${directions[direction]}`
+          : `opacity-20 ${directions[direction]}`
       }`}
     >
       {children}
