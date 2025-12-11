@@ -6,7 +6,7 @@ import { Award, BookOpen, ImageIcon, Users } from "lucide-react";
 import { photosData } from "../data/photosData";
 import SlideIn from "../effects/SlideIn.jsx"
 import building from "../assets/home.jpg"
-import video from "../assets/video.mp4"
+import video from "../assets/video.MP4"
 // fixed videoMP4 to videomp4
 import school from "../assets/school.png"
 import ground from "../assets/campus.jpg"
